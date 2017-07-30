@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 
 
 public class UserCreateServlet extends HttpServlet {
+//    localhost:8080/users/create?id=44&first_name=fnm&last_name=lnm&salary=900&dob=2011-07-07
     private UserService userService;
 
     public void setUserService(UserService userService) {
@@ -28,8 +29,9 @@ public class UserCreateServlet extends HttpServlet {
         String dob = req.getParameter("dob");
         User user = new User(Long.valueOf(paramId), first_name, last_name, Double.valueOf(salary), LocalDate.parse(dob, DateTimeFormatter.ISO_DATE));
         userService.create(user);
-        resp.setContentType("text/html;charset=utf-8");
-        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.sendRedirect("/users");
+//        resp.setContentType("text/html;charset=utf-8");
+//        resp.setStatus(HttpServletResponse.SC_OK);
     }
 
 }
