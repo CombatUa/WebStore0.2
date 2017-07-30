@@ -7,19 +7,23 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import ua.alex.web.store.dao.UserDao;
 import ua.alex.web.store.dao.ojdbc.UserDaoImpl;
 import ua.alex.web.store.service.UserService;
-import ua.alex.web.store.servlet.UserServlet;
+import ua.alex.web.store.servlet.UserDeleteServlet;
+import ua.alex.web.store.servlet.UsersServlet;
 
 public class Starter {
     public static void main(String[] args) throws Exception {
         UserDao userDao = new UserDaoImpl();
         UserService userService = new UserService();
         userService.setUserDao(userDao);
-        UserServlet userServlet = new UserServlet();
+        UsersServlet userServlet = new UsersServlet();
         userServlet.setUserService(userService);
+        UserDeleteServlet userDeleteServlet = new UserDeleteServlet();
+        userDeleteServlet.setUserService(userService);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setResourceBase("webapp");
         context.addServlet(new ServletHolder(userServlet), "/users");
+        context.addServlet(new ServletHolder(userDeleteServlet), "/users/delete");
         DefaultServlet defaultServlet = new DefaultServlet();
 
         context.addServlet(new ServletHolder(defaultServlet), "/*");

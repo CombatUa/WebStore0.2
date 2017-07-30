@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserServlet extends HttpServlet {
+public class UsersServlet extends HttpServlet {
     private UserService userService;
 
     public void setUserService(UserService userService) {
