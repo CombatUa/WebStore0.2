@@ -9,6 +9,7 @@ import ua.alex.web.store.dao.ojdbc.UserDaoImpl;
 import ua.alex.web.store.service.UserService;
 import ua.alex.web.store.servlet.UserCreateServlet;
 import ua.alex.web.store.servlet.UserDeleteServlet;
+import ua.alex.web.store.servlet.UserUpdateServlet;
 import ua.alex.web.store.servlet.UsersServlet;
 
 public class Starter {
@@ -22,12 +23,15 @@ public class Starter {
         userDeleteServlet.setUserService(userService);
         UserCreateServlet userCreateServlet = new UserCreateServlet();
         userCreateServlet.setUserService(userService);
+        UserUpdateServlet userUpdateServlet = new UserUpdateServlet();
+        userUpdateServlet.setUserService(userService);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setResourceBase("webapp");
         context.addServlet(new ServletHolder(userServlet), "/users");
         context.addServlet(new ServletHolder(userDeleteServlet), "/users/delete");
         context.addServlet(new ServletHolder(userCreateServlet), "/users/create");
+        context.addServlet(new ServletHolder(userUpdateServlet), "/users/update");
         DefaultServlet defaultServlet = new DefaultServlet();
 
         context.addServlet(new ServletHolder(defaultServlet), "/*");
