@@ -1,7 +1,7 @@
 package ua.alex.web.store.dao;
 
 import org.junit.jupiter.api.Test;
-import ua.alex.web.store.dao.ojdbc.UserDaoImpl;
+import ua.alex.web.store.dao.jdbc.UserDaoImpl;
 import ua.alex.web.store.entity.User;
 
 import java.time.LocalDate;
@@ -20,8 +20,8 @@ class UserDaoImplTest {
     @Test
     void create() {
         Long aLong = userDao.create(new User(-3L, "TestName", "TestLastName", 300.0, LocalDate.of(2000, 07, 17)));
-        assertEquals(-3L, aLong.longValue());
-        userDao.delete(-3L);
+        assertEquals(userDao.getEntityByKey(aLong).getId(), aLong);
+        userDao.delete(aLong);
     }
 
     @Test

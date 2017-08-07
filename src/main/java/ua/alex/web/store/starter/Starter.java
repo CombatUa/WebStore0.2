@@ -5,20 +5,24 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ua.alex.web.store.dao.UserDao;
-import ua.alex.web.store.dao.ojdbc.UserDaoImpl;
+import ua.alex.web.store.dao.jdbc.UserDaoImpl;
 import ua.alex.web.store.service.UserService;
-import ua.alex.web.store.servlet.UserCreateServlet;
-import ua.alex.web.store.servlet.UserDeleteServlet;
-import ua.alex.web.store.servlet.UserUpdateServlet;
-import ua.alex.web.store.servlet.UsersServlet;
+import ua.alex.web.store.servlet.*;
+
+import java.net.URI;
+import java.net.URL;
 
 public class Starter {
     public static void main(String[] args) throws Exception {
         UserDao userDao = new UserDaoImpl();
         UserService userService = new UserService();
         userService.setUserDao(userDao);
-        UsersServlet userServlet = new UsersServlet();
+        UsersServlet usersServlet = new UsersServlet();
+        usersServlet.setUserService(userService);
+
+        UserServlet userServlet = new UserServlet();
         userServlet.setUserService(userService);
+
         UserDeleteServlet userDeleteServlet = new UserDeleteServlet();
         userDeleteServlet.setUserService(userService);
         UserCreateServlet userCreateServlet = new UserCreateServlet();
@@ -27,8 +31,18 @@ public class Starter {
         userUpdateServlet.setUserService(userService);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setResourceBase("webapp");
-        context.addServlet(new ServletHolder(userServlet), "/users");
+        ClassLoader classLoader = Starter.class.getClassLoader();
+        URL f = classLoader.getResource("webapp");
+        if (f == null)
+        {
+            throw new RuntimeException("Unable to find resource directory");
+        }
+
+        System.err.println("WebRoot is " + f.getPath());
+
+        context.setResourceBase(f.getPath());
+        context.addServlet(new ServletHolder(usersServlet), "/users");
+        context.addServlet(new ServletHolder(userServlet), "/user/*");
         context.addServlet(new ServletHolder(userDeleteServlet), "/users/delete");
         context.addServlet(new ServletHolder(userCreateServlet), "/users/create");
         context.addServlet(new ServletHolder(userUpdateServlet), "/users/update");

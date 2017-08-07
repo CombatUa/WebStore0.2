@@ -5,8 +5,8 @@ import ua.alex.web.store.entity.User;
 
 import java.util.List;
 
-public class UserService {
-    private UserDao userDao;
+public class UserService{
+    private UserDao<User,Long> userDao;
 
     public List<User> getAll() {
         return userDao.getAll();

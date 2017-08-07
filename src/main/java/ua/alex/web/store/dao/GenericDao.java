@@ -2,7 +2,7 @@ package ua.alex.web.store.dao;
 
 import java.util.List;
 
-public interface AbstractDao<E, K> {
+public interface GenericDao<E, K> {
     List<E> getAll();
 
     E getEntityByKey(K key);

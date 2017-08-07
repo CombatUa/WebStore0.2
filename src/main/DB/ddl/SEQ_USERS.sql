@@ -1,0 +1,1 @@
+create SEQUENCE seq_users INCREMENT BY 1 START WITH 100;

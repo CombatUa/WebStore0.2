@@ -4,24 +4,11 @@ import java.time.LocalDate;
 
 public class User {
 
-    long Id;
-    String firstName;
-    String lastName;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "Id=" + Id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", salary=" + salary +
-                ", dateOfBirth=" + dateOfBirth +
-                '}';
-    }
-
-    double salary;
-    LocalDate dateOfBirth;
-
+    private long Id;
+    private String firstName;
+    private String lastName;
+    private double salary;
+    private LocalDate dateOfBirth;
     public User() {
     }
 
@@ -71,6 +58,17 @@ public class User {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "Id=" + Id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", salary=" + salary +
+                ", dateOfBirth=" + dateOfBirth +
+                '}';
     }
 
 

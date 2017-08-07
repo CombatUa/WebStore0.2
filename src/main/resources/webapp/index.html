@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Web Store</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="container container-fluid">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Manage Users</h3>
+        </div>
+        <div class="panel-body">
+
+
+            <h1> Users lists</h1>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal"
+                    data-mybtnname="Add">
+                <span class="glyphicon glyphicon-plus"></span>User
+            </button>
+
+            <div class="divider"/>
+            <table class="table table-hover" id="table4">
+                <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Salary</th>
+                    <th>date of birth</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <#list userList as x>
+                    <tr>
+                        <td>${x.id}</td>
+                        <td>${x.firstName}</td>
+                        <td>${x.lastName}</td>
+                        <td>${x.salary?c}</td>
+                        <td>${x.dateOfBirth}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal"
+                                        data-target="#myModal" data-mybtnname="Edit" data-btnrow="${x?counter}">Edit
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger"><span
+                                        class="glyphicon glyphicon-trash"
+                                        onclick="location.href = 'users/delete?id=${x.id}';"/></button>
+                            </div>
+                        </td>
+                    </tr>
+                </#list>
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title text-capitalize" id="myModalLabel">Modal title</h4>
+            </div>
+            <form id="mysupform" method="get" action="users">
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group row">
+                            <label for="userid-text-input" class="col-2 col-form-label">User ID</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" name="id" placeholder="User ID"
+                                       id="userid-text-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="firstname-text-input" class="col-2 col-form-label">First Name</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" name="first_name" placeholder="First Name"
+                                       id="firstname-text-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="lastname-text-input" class="col-2 col-form-label">Last Name</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" name="last_name" placeholder="Last Name"
+                                       id="lastname-text-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="salary-number-input" class="col-2 col-form-label">Salary</label>
+                            <div class="col-10">
+                                <input class="form-control" type="number" name="salary" placeholder="Salary"
+                                       id="salary-number-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="dob-date-input" class="col-2 col-form-label">Date of Birth</label>
+                            <div class="col-10">
+                                <input class="form-control" type="date" name="dob" placeholder="yyyy-mm-dd"
+                                       id="dob-date-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" data-> Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+<script>
+    $('#myModal').on('show.bs.modal', function (event) {
+        var $table = $('#table4')
+
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var firstName, lastName, salary, dateOfBirth, userId;
+        var operation = button.data('mybtnname');
+        var modal = $(this);
+        if (operation == "Edit") {
+
+            console.log('button row:' + button.data('btnrow'))
+
+            $table.children('tbody').find('tr:nth-child(' + button.data('btnrow') + ')').each(function () {
+                userId = $(this).find('td:nth-child(1)').text();
+                firstName = $(this).find('td:nth-child(2)').text();
+                lastName = $(this).find('td:nth-child(3)').text();
+                salary = $(this).find('td:nth-child(4)').text();
+                dateOfBirth = $(this).find('td:nth-child(5)').text();
+                console.log('table:' + $(this).find('td:nth-child(1)').text());
+                console.log('table:' + $(this).find('td:nth-child(2)').text());
+                console.log('table:' + $(this).find('td:nth-child(3)').text());
+                console.log('table:' + $(this).find('td:nth-child(4)').text());
+            });
+            modal.find('.modal-title').text(operation + ' User');
+            $('#mysupform').attr('action', 'users/update')
+            $('#userid-text-input').prop("readonly", true);
+
+
+            $('#userid-text-input').val(userId)
+            $('#firstname-text-input').val(firstName)
+            $('#lastname-text-input').val(lastName)
+            $('#salary-number-input').val(salary)
+            $('#dob-date-input').val(dateOfBirth)
+        }
+        else {
+
+            modal.find('.modal-title').text(operation + ' User');
+            $('#mysupform').attr('action', 'users/create')
+            $('#userid-text-input').prop("readonly", false);
+
+
+        }
+    })
+</script>
+<script>
+    $('#myModal').on('hidden.bs.modal', function () {
+        $(this).find('#userid-text-input').val(''); // Just clear the contents.
+        $(this).find('#firstname-text-input').val(''); // Just clear the contents.
+        $(this).find('#lastname-text-input').val(''); // Just clear the contents.
+        $(this).find('#salary-number-input').val(''); // Just clear the contents.
+        $(this).find('#dob-date-input').val(''); // Just clear the contents.
+    });
+</script>
+</body>

@@ -1,4 +1,4 @@
-package ua.alex.web.store.dao.ojdbc;
+package ua.alex.web.store.dao.jdbc;
 
 import ua.alex.web.store.dao.UserDao;
 import ua.alex.web.store.dao.mapper.UserMapper;
@@ -8,19 +8,22 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl implements UserDao<User, Long> {
     private static final UserMapper USER_MAPPER = new UserMapper();
-    private static final String SELECT_ALL_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH FROM USERS";
-    private static final String CREATE_USER = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH) values (?,?,?,?,?)";
-    private static final String UPDATE_USER = "UPDATE USERS SET FIRST_NAME=?,LAST_NAME=?,SALARY=?,DATE_OF_BIRTH=? WHERE ID = ?";
-    private static final String DELETE_USER = "DELETE FROM USERS WHERE ID = ?";
-    private static final String SELECT_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH FROM USERS WHERE ID=?";
+    private static final String SQL_SELECT_ALL_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH FROM USERS";
+    //    private static final String SQL_CREATE_USER = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH) values (?,?,?,?,?)";
+    private static final String SQL_CREATE_USER = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH) VALUES (seq_users.nextval,?,?,?,?)";
+    private static final String SQL_UPDATE_USER = "UPDATE USERS SET FIRST_NAME=?,LAST_NAME=?,SALARY=?,DATE_OF_BIRTH=? WHERE ID = ?";
+    private static final String SQL_DELETE_USER = "DELETE FROM USERS WHERE ID = ?";
+    private static final String SQL_SELECT_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH FROM USERS WHERE ID=?";
+    private static final String USER_COLS[] = {"ID", "FIRST_NAME", "LAST_NAME", "SALARY", "DATE_OF_BIRTH"};
     private Connection connection;
 
     public UserDaoImpl() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             connection = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.1.70:1521/orcl", "web_store", "web_store");
+            System.err.println("Is generated keys supported:" + connection.getMetaData().supportsGetGeneratedKeys());
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -31,7 +34,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_ALL_USERS);
         ) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -46,7 +49,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getEntityByKey(Long key) {
         User user = null;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USERS)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_USERS)) {
             preparedStatement.setLong(1, key);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -62,13 +65,17 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Long create(User entity) {
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(CREATE_USER)) {
-            preparedStatement.setLong(1, entity.getId());
-            preparedStatement.setString(2, entity.getFirstName());
-            preparedStatement.setString(3, entity.getLastName());
-            preparedStatement.setDouble(4, entity.getSalary());
-            preparedStatement.setDate(5, Date.valueOf(entity.getDateOfBirth()));
-            preparedStatement.executeQuery();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_USER, USER_COLS)) {
+//            preparedStatement.setLong(1, entity.getId());
+            preparedStatement.setString(1, entity.getFirstName());
+            preparedStatement.setString(2, entity.getLastName());
+            preparedStatement.setDouble(3, entity.getSalary());
+            preparedStatement.setDate(4, Date.valueOf(entity.getDateOfBirth()));
+            preparedStatement.executeUpdate();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            while (generatedKeys.next()) {
+                entity.setId(generatedKeys.getLong(1));
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,14 +86,14 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean update(Long key, User entity) {
         boolean isSucsess = true;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER)
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE_USER)
         ) {
             preparedStatement.setString(1, entity.getFirstName());
             preparedStatement.setString(2, entity.getLastName());
             preparedStatement.setDouble(3, entity.getSalary());
             preparedStatement.setDate(4, Date.valueOf(entity.getDateOfBirth()));
             preparedStatement.setLong(5, key);
-            preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             isSucsess = false;
@@ -98,9 +105,9 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean delete(Long key) {
         boolean isSucsess = true;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_USER)) {
             preparedStatement.setLong(1, key);
-            preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             isSucsess = false;
