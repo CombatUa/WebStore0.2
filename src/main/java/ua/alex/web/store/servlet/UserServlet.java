@@ -22,20 +22,8 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        String paramId = req.getParameter("id");
-//        String first_name = req.getParameter("first_name");
-//        String last_name = req.getParameter("last_name");
-//        String salary = req.getParameter("salary");
-//        String dob = req.getParameter("dob");
-//        User user = new User(Long.valueOf(paramId), first_name, last_name, Double.valueOf(salary), LocalDate.parse(dob, DateTimeFormatter.ISO_DATE));
-//        userService.update(Long.valueOf(paramId), user);
-////        resp.sendRedirect("/users");
-//        resp.setContentType("text/html;charset=utf-8");
-//        resp.setStatus(HttpServletResponse.SC_OK);
-
         resp.setContentType("application/json");
         resp.setStatus(HttpServletResponse.SC_OK);
-        Respose respose = new Respose();
 
         Long id = getIdFromURI(req.getRequestURI());
 
@@ -54,53 +42,34 @@ public class UserServlet extends HttpServlet {
             result = userService.update(user.getId(), user);
         }
         writeResponse(resp, result, user);
-
-//        if (result) {
-//            respose.setStatus("" + HttpServletResponse.SC_OK);
-//            respose.setMessage("OK");
-//        } else if (id == null) {
-//            respose.setStatus("" + HttpServletResponse.SC_BAD_REQUEST);
-//            respose.setMessage("BAD_REQUEST");
-//        } else {
-//            respose.setStatus("" + HttpServletResponse.SC_NOT_MODIFIED);
-//            respose.setMessage("NOT_MODIFIED");
-//
-//        }
-//        respose.setStatus("" + HttpServletResponse.SC_OK);
-//        respose.setMessage("OK");
-//        resp.getWriter().print(gson.toJson(respose));
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setStatus(HttpServletResponse.SC_OK);
-        Respose respose = new Respose();
 
         StringBuffer stringBuffer = new StringBuffer();
         BufferedReader reader = req.getReader();
         while (reader.ready()) {
             stringBuffer.append(reader.readLine());
         }
-        System.out.println(stringBuffer);
-        Gson gson = new Gson();
         User user = gson.fromJson(stringBuffer.toString(), User.class);
         Long id = userService.create(user);
-        user.setId(id);
 
-        respose.setStatus("" + HttpServletResponse.SC_OK);
-        respose.setMessage("OK");
+        boolean result = false;
 
-        resp.getWriter().print(gson.toJson(user));
-        resp.getWriter().print(gson.toJson(respose));
+        if (id != null) {
+            result = true;
+            user.setId(id);
+        }
+        writeResponse(resp, result, user);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setStatus(HttpServletResponse.SC_OK);
-        Respose respose = new Respose();
-        Gson gson = new Gson();
         Long id = getIdFromURI(req.getRequestURI());
         boolean result = false;
         User user = null;
@@ -108,18 +77,6 @@ public class UserServlet extends HttpServlet {
             user = userService.getEntityByKey(id);
         }
         writeResponse(resp, result, user);
-//        if (user != null) {
-//            respose.setStatus("" + HttpServletResponse.SC_OK);
-//            respose.setMessage("OK");
-//            resp.getWriter().print(gson.toJson(user));
-//        } else if (id == null) {
-//            respose.setStatus("" + HttpServletResponse.SC_BAD_REQUEST);
-//            respose.setMessage("BAD_REQUEST");
-//        } else {
-//            respose.setStatus("" + HttpServletResponse.SC_NOT_MODIFIED);
-//            respose.setMessage("NOT_MODIFIED");
-//        }
-//        resp.getWriter().print(gson.toJson(respose));
 
     }
 
@@ -127,7 +84,6 @@ public class UserServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setStatus(HttpServletResponse.SC_OK);
-        Respose respose = new Respose();
         Long id = getIdFromURI(req.getRequestURI());
         boolean result = false;
 
@@ -146,18 +102,11 @@ public class UserServlet extends HttpServlet {
             if (entity != null) {
                 resp.getWriter().print(gson.toJson(entity));
             }
-//        } else if (id == null) {
-//            respose.setStatus("" + HttpServletResponse.SC_BAD_REQUEST);
-//            respose.setMessage("BAD_REQUEST");
-//
-//
-//
         } else {
             respose.setStatus("" + HttpServletResponse.SC_NOT_MODIFIED);
             respose.setMessage("NOT_MODIFIED");
-
+            resp.getWriter().print(gson.toJson(respose));
         }
-        resp.getWriter().print(gson.toJson(respose));
     }
 
     private Long getIdFromURI(String requestURI) {

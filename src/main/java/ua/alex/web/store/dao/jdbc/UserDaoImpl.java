@@ -64,9 +64,9 @@ public class UserDaoImpl implements UserDao<User, Long> {
 
     @Override
     public Long create(User entity) {
+        boolean isSucess=true;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_USER, USER_COLS)) {
-//            preparedStatement.setLong(1, entity.getId());
             preparedStatement.setString(1, entity.getFirstName());
             preparedStatement.setString(2, entity.getLastName());
             preparedStatement.setDouble(3, entity.getSalary());
@@ -78,9 +78,10 @@ public class UserDaoImpl implements UserDao<User, Long> {
             }
 
         } catch (SQLException e) {
+            isSucess=false;
             e.printStackTrace();
         }
-        return entity.getId();
+        return isSucess?entity.getId():null;
     }
 
     @Override
