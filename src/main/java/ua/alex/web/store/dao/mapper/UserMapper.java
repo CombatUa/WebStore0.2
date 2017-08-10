@@ -14,6 +14,7 @@ public class UserMapper implements GenericMapper<User> {
             user.setLastName(resultSet.getString("LAST_NAME"));
             user.setSalary(resultSet.getDouble("SALARY"));
             user.setDateOfBirth(resultSet.getDate("DATE_OF_BIRTH").toLocalDate());
+            user.setPicture(resultSet.getBytes("PICTURE"));
         return user;
     }
 }

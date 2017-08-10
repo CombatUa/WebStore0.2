@@ -4,6 +4,11 @@ import org.junit.jupiter.api.Test;
 import ua.alex.web.store.dao.jdbc.UserDaoImpl;
 import ua.alex.web.store.entity.User;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,8 +23,12 @@ class UserDaoImplTest {
     }
 
     @Test
-    void create() {
-        Long aLong = userDao.create(new User(-3L, "TestName", "TestLastName", 300.0, LocalDate.of(2000, 07, 17)));
+    void create() throws IOException {
+        InputStream picture = Files.newInputStream(Paths.get("D:\\MyWork\\Projects\\GitHubProjects\\WebStore0.2\\src\\test\\testRecources\\Lighthouse.jpg"));
+        byte[] bytes = new byte[picture.available()];
+        picture.read(bytes);
+
+        Long aLong = userDao.create(new User(-3L, "TestName", "TestLastName", 300.0, LocalDate.of(2000, 07, 17),bytes));
         assertEquals(userDao.getEntityByKey(aLong).getId(), aLong);
         userDao.delete(aLong);
     }

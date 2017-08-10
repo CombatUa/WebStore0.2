@@ -1,9 +1,11 @@
 package ua.alex.web.store.dao.jdbc;
 
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import ua.alex.web.store.dao.UserDao;
 import ua.alex.web.store.dao.mapper.UserMapper;
 import ua.alex.web.store.entity.User;
 
+import java.io.ByteArrayInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +14,19 @@ public class UserDaoImpl implements UserDao<User, Long> {
     private static final UserMapper USER_MAPPER = new UserMapper();
     private static final String SQL_SELECT_ALL_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH FROM USERS";
     //    private static final String SQL_CREATE_USER = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH) values (?,?,?,?,?)";
-    private static final String SQL_CREATE_USER = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH) VALUES (seq_users.nextval,?,?,?,?)";
-    private static final String SQL_UPDATE_USER = "UPDATE USERS SET FIRST_NAME=?,LAST_NAME=?,SALARY=?,DATE_OF_BIRTH=? WHERE ID = ?";
+    private static final String SQL_CREATE_USER = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH,PICTURE) VALUES (seq_users.nextval,?,?,?,?,?)";
+    private static final String SQL_UPDATE_USER = "UPDATE USERS SET FIRST_NAME=?,LAST_NAME=?,SALARY=?,DATE_OF_BIRTH=?, PICTURE=? WHERE ID = ?";
     private static final String SQL_DELETE_USER = "DELETE FROM USERS WHERE ID = ?";
-    private static final String SQL_SELECT_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH FROM USERS WHERE ID=?";
-    private static final String USER_COLS[] = {"ID", "FIRST_NAME", "LAST_NAME", "SALARY", "DATE_OF_BIRTH"};
+    private static final String SQL_SELECT_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH, PICTURE FROM USERS WHERE ID=?";
+    private static final String USER_COLS[] = {"ID", "FIRST_NAME", "LAST_NAME", "SALARY", "DATE_OF_BIRTH","PICTURE"};
     private Connection connection;
 
     public UserDaoImpl() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            connection = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.1.70:1521/orcl", "web_store", "web_store");
+//            connection = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.1.70:1521/orcl", "web_store", "web_store");
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@//172.30.151.122:1521/orcl", "web_store", "web_store");
+
             System.err.println("Is generated keys supported:" + connection.getMetaData().supportsGetGeneratedKeys());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,6 +75,7 @@ public class UserDaoImpl implements UserDao<User, Long> {
             preparedStatement.setString(2, entity.getLastName());
             preparedStatement.setDouble(3, entity.getSalary());
             preparedStatement.setDate(4, Date.valueOf(entity.getDateOfBirth()));
+            preparedStatement.setBinaryStream(5,new ByteArrayInputStream(entity.getPicture()));
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             while (generatedKeys.next()) {
@@ -93,7 +98,8 @@ public class UserDaoImpl implements UserDao<User, Long> {
             preparedStatement.setString(2, entity.getLastName());
             preparedStatement.setDouble(3, entity.getSalary());
             preparedStatement.setDate(4, Date.valueOf(entity.getDateOfBirth()));
-            preparedStatement.setLong(5, key);
+            preparedStatement.setBinaryStream(5, new ByteArrayInputStream(entity.getPicture()));
+            preparedStatement.setLong(6, key);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {

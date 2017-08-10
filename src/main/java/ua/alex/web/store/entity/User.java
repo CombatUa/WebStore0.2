@@ -1,5 +1,6 @@
 package ua.alex.web.store.entity;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 
 public class User {
@@ -9,15 +10,21 @@ public class User {
     private String lastName;
     private double salary;
     private LocalDate dateOfBirth;
+    private byte[] picture;
     public User() {
     }
 
     public User(Long id, String firstName, String lastName, double salary, LocalDate dateOfBirth) {
+        this(id, firstName, lastName, salary, dateOfBirth,null);
+    }
+
+    public User(Long id, String firstName, String lastName, double salary, LocalDate dateOfBirth, byte[] picture) {
         Id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.salary = salary;
         this.dateOfBirth = dateOfBirth;
+        this.picture = picture;
     }
 
     public Long getId() {
@@ -72,6 +79,13 @@ public class User {
     }
 
 
+    public byte[] getPicture() {
+        return picture;
+    }
+
+    public void setPicture(byte[] picture) {
+        this.picture = picture;
+    }
 }
 
 
