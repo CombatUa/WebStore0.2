@@ -1,7 +1,9 @@
 package ua.alex.web.store.servlet;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import ua.alex.web.store.entity.User;
+import ua.alex.web.store.json.GsonByteArrayHelper;
 import ua.alex.web.store.service.UserService;
 
 import javax.servlet.ServletException;
@@ -13,7 +15,8 @@ import java.io.IOException;
 
 
 public class UserServlet extends HttpServlet {
-    private final Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder().registerTypeHierarchyAdapter(byte[].class,
+            new GsonByteArrayHelper()).create(); //new Gson();
     private UserService userService;
 
     public void setUserService(UserService userService) {
@@ -33,7 +36,6 @@ public class UserServlet extends HttpServlet {
             stringBuffer.append(reader.readLine());
         }
         System.out.println(stringBuffer);
-        Gson gson = new Gson();
         User user = gson.fromJson(stringBuffer.toString(), User.class);
         user.setId(id);
         boolean result = false;
@@ -74,6 +76,7 @@ public class UserServlet extends HttpServlet {
         boolean result = false;
         User user = null;
         if (id != null) {
+            result = true;
             user = userService.getEntityByKey(id);
         }
         writeResponse(resp, result, user);

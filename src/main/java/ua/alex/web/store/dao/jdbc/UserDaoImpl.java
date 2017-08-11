@@ -12,7 +12,7 @@ import java.util.List;
 
 public class UserDaoImpl implements UserDao<User, Long> {
     private static final UserMapper USER_MAPPER = new UserMapper();
-    private static final String SQL_SELECT_ALL_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH FROM USERS";
+    private static final String SQL_SELECT_ALL_USERS = "SELECT ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH,PICTURE FROM USERS";
     //    private static final String SQL_CREATE_USER = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH) values (?,?,?,?,?)";
     private static final String SQL_CREATE_USER = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,SALARY,DATE_OF_BIRTH,PICTURE) VALUES (seq_users.nextval,?,?,?,?,?)";
     private static final String SQL_UPDATE_USER = "UPDATE USERS SET FIRST_NAME=?,LAST_NAME=?,SALARY=?,DATE_OF_BIRTH=?, PICTURE=? WHERE ID = ?";
@@ -24,8 +24,8 @@ public class UserDaoImpl implements UserDao<User, Long> {
     public UserDaoImpl() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-//            connection = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.1.70:1521/orcl", "web_store", "web_store");
-            connection = DriverManager.getConnection("jdbc:oracle:thin:@//172.30.151.122:1521/orcl", "web_store", "web_store");
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.1.70:1521/orcl", "web_store", "web_store");
+//            connection = DriverManager.getConnection("jdbc:oracle:thin:@//172.30.151.122:1521/orcl", "web_store", "web_store");
 
             System.err.println("Is generated keys supported:" + connection.getMetaData().supportsGetGeneratedKeys());
         } catch (SQLException e) {

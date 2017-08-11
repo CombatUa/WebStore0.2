@@ -33,7 +33,7 @@
             </button>
 
             <div class="divider"/>
-            <table class="table table-hover" id="table4">
+            <table class="table table-hover" id="users_tab">
                 <thead>
                 <tr>
                     <th>User ID</th>
@@ -46,7 +46,7 @@
                 </thead>
                 <tbody>
                 <#list userList as x>
-                    <tr>
+                    <tr id="${x.id}">
                         <td>${x.id}</td>
                         <td>${x.firstName}</td>
                         <td>${x.lastName}</td>
@@ -54,8 +54,9 @@
                         <td>${x.dateOfBirth}</td>
                         <td>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal"
-                                        data-target="#myModal" data-mybtnname="Edit" data-btnrow="${x?counter}">Edit
+                                <button type="button" class="btn btn-sm btn-success edit-user-btnn" data-toggle="modal"
+                                        data-target="#myModal"
+                                        data-mybtnname="Edit" data-btnrow="${x?counter}">Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger"><span
                                         class="glyphicon glyphicon-trash"
@@ -72,7 +73,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal 1 -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -130,12 +131,126 @@
     </div>
 </div>
 
+<!-- Modal show -->
+<div class="modal fade" id="myModalShow-user-get" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title text-capitalize" id="myModalLabel-user-get">Modal title</h4>
+            </div>
+            <form id="mysupform-user-get" >
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group row">
+                            <label for="userid-text-input" class="col-2 col-form-label">User ID</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" name="id" placeholder="User ID"
+                                       id="userid-text-input-user-get">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="firstname-text-input" class="col-2 col-form-label">First Name</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" name="first_name" placeholder="First Name"
+                                       id="firstname-text-input-user-get">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="lastname-text-input" class="col-2 col-form-label">Last Name</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" name="last_name" placeholder="Last Name"
+                                       id="lastname-text-input-user-get">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="salary-number-input" class="col-2 col-form-label">Salary</label>
+                            <div class="col-10">
+                                <input class="form-control" type="number" name="salary" placeholder="Salary"
+                                       id="salary-number-input-user-get">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="dob-date-input" class="col-2 col-form-label">Date of Birth</label>
+                            <div class="col-10">
+                                <input class="form-control" type="date" name="dob" placeholder="yyyy-mm-dd"
+                                       id="dob-date-input-user-get">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" data-> Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="js/bootstrap.min.js"></script>
+<!--<script>-->
+    <!--$(".edit-user-btnn").click(function(e) {-->
+        <!--e.stopPropagation();-->
+        <!--$('#myModal').modal(e);-->
+
+    <!--})-->
+<!--</script>-->
+<script>
+//    <!-- $(".myLink").click(function(e) {
+//        $.ajax({
+//            url: '@Url.RouteUrl(new{ action="Edit", controller="Home"})',
+//            data: {id: 2},
+//            type: 'GET',
+//            dataType: 'json',
+//            contentType: "application/json; charset=utf-8",
+//            success: function(data) {
+//                $(".message-edit-text").val(data.message);
+//            }});
+//        $('#myModal').modal('show');
+//        e.preventDefault();
+//    });-->
+    $('#users_tab').find('tr').click(function(e) {
+        if ($(e.relatedTarget).data('btnrow')) return;
+        // row was clicked
+
+        var href = $(this).attr("id");
+        $.ajax({
+            url:'user/'+href,
+            type:'GET',
+//            data:href,
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success: function(data) {
+//                $(".message-edit-text").val(data.message);
+                $('#userid-text-input-user-get').prop("readonly", true);
+
+                $('#userid-text-input-user-get').val(data.Id)
+                $('#firstname-text-input-user-get').val(data.firstName)
+                $('#lastname-text-input-user-get').val(data.lastName)
+                $('#salary-number-input-user-get').val(data.salary)
+                $('#dob-date-input-user-get').val(''+data.dateOfBirth.year+'-'+("0"+data.dateOfBirth.month).slice(-2)+'-'+("0"+data.dateOfBirth.day).slice(-2))
+                console.log('clicked !!!'+ data.Id);
+                $('#myModalShow-user-get').modal('show');
+//                alert('successfully submitted')
+        }})
+
+
+
+//        if(href) {
+//            window.location = "user/"+href;
+//        }
+//        console.log('clicked !!!'+href);
+    });
+</script>
 <script>
     $('#myModal').on('show.bs.modal', function (event) {
-        var $table = $('#table4')
+
+        var $table = $('#users_tab')
 
         var button = $(event.relatedTarget) // Button that triggered the modal
         var firstName, lastName, salary, dateOfBirth, userId;
@@ -179,6 +294,7 @@
 </script>
 <script>
     $('#myModal').on('hidden.bs.modal', function () {
+        e.stopPropagation();
         $(this).find('#userid-text-input').val(''); // Just clear the contents.
         $(this).find('#firstname-text-input').val(''); // Just clear the contents.
         $(this).find('#lastname-text-input').val(''); // Just clear the contents.
