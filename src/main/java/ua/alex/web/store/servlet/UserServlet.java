@@ -104,6 +104,8 @@ public class UserServlet extends HttpServlet {
             respose.setMessage("OK");
             if (entity != null) {
                 resp.getWriter().print(gson.toJson(entity));
+            } else {
+                resp.getWriter().print(gson.toJson(respose));
             }
         } else {
             respose.setStatus("" + HttpServletResponse.SC_NOT_MODIFIED);

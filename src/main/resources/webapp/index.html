@@ -53,14 +53,15 @@
                         <td>${x.salary?c}</td>
                         <td>${x.dateOfBirth}</td>
                         <td>
-                            <div class="btn-group">
+                            <div class="btn-group ">
                                 <button type="button" class="btn btn-sm btn-success edit-user-btnn" data-toggle="modal"
                                         data-target="#myModal"
                                         data-mybtnname="Edit" data-btnrow="${x?counter}">Edit
                                 </button>
-                                <button type="button" class="btn btn-sm btn-danger"><span
-                                        class="glyphicon glyphicon-trash"
-                                        onclick="location.href = 'users/delete?id=${x.id}';"/></button>
+                                <button type="button" class="btn btn-sm btn-danger my-delete-button"
+                                        data-mybtnnameid="${x.id}">
+                                    <span class="glyphicon glyphicon-trash"/>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -140,7 +141,7 @@
                         aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title text-capitalize" id="myModalLabel-user-get">Modal title</h4>
             </div>
-            <form id="mysupform-user-get" >
+            <form id="mysupform-user-get">
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group row">
@@ -194,38 +195,61 @@
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="js/bootstrap.min.js"></script>
 <!--<script>-->
-    <!--$(".edit-user-btnn").click(function(e) {-->
-        <!--e.stopPropagation();-->
-        <!--$('#myModal').modal(e);-->
+<!--$(".edit-user-btnn").click(function(e) {-->
+<!--e.stopPropagation();-->
+<!--$('#myModal').modal(e);-->
 
-    <!--})-->
+<!--})-->
 <!--</script>-->
 <script>
-//    <!-- $(".myLink").click(function(e) {
-//        $.ajax({
-//            url: '@Url.RouteUrl(new{ action="Edit", controller="Home"})',
-//            data: {id: 2},
-//            type: 'GET',
-//            dataType: 'json',
-//            contentType: "application/json; charset=utf-8",
-//            success: function(data) {
-//                $(".message-edit-text").val(data.message);
-//            }});
-//        $('#myModal').modal('show');
-//        e.preventDefault();
-//    });-->
-    $('#users_tab').find('tr').click(function(e) {
-        if ($(e.relatedTarget).data('btnrow')) return;
+    //    $('table').on('click','.delete',function(){
+    //        $(this).parents('tr').remove();
+    //    })
+    $('#users_tab').on('click', '.my-delete-button', function (e) {
+        e.stopPropagation();
+        var button = $(e.currentTarget);
+        var userId = button.data('mybtnnameid');
+        $.ajax({
+            url: 'user/' + userId,
+            type: 'delete',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success: function () {
+                button.parents('tr').remove();
+            },
+            error: function (a, b, c) {
+                alert("User Not Deleted!");
+            }
+        })
+    });
+</script>
+<script>
+    //    <!-- $(".myLink").click(function(e) {
+    //        $.ajax({
+    //            url: '@Url.RouteUrl(new{ action="Edit", controller="Home"})',
+    //            data: {id: 2},
+    //            type: 'GET',
+    //            dataType: 'json',
+    //            contentType: "application/json; charset=utf-8",
+    //            success: function(data) {
+    //                $(".message-edit-text").val(data.message);
+    //            }});
+    //        $('#myModal').modal('show');
+    //        e.preventDefault();
+    //    });-->
+    //    $('#users_tab').find('tr').click(
+    $('#users_tab').on('click', 'tr', function (e) {
+        // if ($(e.relatedTarget).data('btnrow')) return;
         // row was clicked
 
         var href = $(this).attr("id");
         $.ajax({
-            url:'user/'+href,
-            type:'GET',
+            url: 'user/' + href,
+            type: 'GET',
 //            data:href,
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
-            success: function(data) {
+            success: function (data) {
 //                $(".message-edit-text").val(data.message);
                 $('#userid-text-input-user-get').prop("readonly", true);
 
@@ -233,12 +257,12 @@
                 $('#firstname-text-input-user-get').val(data.firstName)
                 $('#lastname-text-input-user-get').val(data.lastName)
                 $('#salary-number-input-user-get').val(data.salary)
-                $('#dob-date-input-user-get').val(''+data.dateOfBirth.year+'-'+("0"+data.dateOfBirth.month).slice(-2)+'-'+("0"+data.dateOfBirth.day).slice(-2))
-                console.log('clicked !!!'+ data.Id);
+                $('#dob-date-input-user-get').val('' + data.dateOfBirth.year + '-' + ("0" + data.dateOfBirth.month).slice(-2) + '-' + ("0" + data.dateOfBirth.day).slice(-2))
+                console.log('clicked !!!' + data.Id);
                 $('#myModalShow-user-get').modal('show');
 //                alert('successfully submitted')
-        }})
-
+            }
+        })
 
 
 //        if(href) {
@@ -251,7 +275,6 @@
     $('#myModal').on('show.bs.modal', function (event) {
 
         var $table = $('#users_tab')
-
         var button = $(event.relatedTarget) // Button that triggered the modal
         var firstName, lastName, salary, dateOfBirth, userId;
         var operation = button.data('mybtnname');
@@ -293,7 +316,7 @@
     })
 </script>
 <script>
-    $('#myModal').on('hidden.bs.modal', function () {
+    $('#myModal').on('hidden.bs.modal', function (e) {
         e.stopPropagation();
         $(this).find('#userid-text-input').val(''); // Just clear the contents.
         $(this).find('#firstname-text-input').val(''); // Just clear the contents.
