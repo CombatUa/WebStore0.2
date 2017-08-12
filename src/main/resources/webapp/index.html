@@ -54,8 +54,7 @@
                         <td>${x.dateOfBirth}</td>
                         <td>
                             <div class="btn-group ">
-                                <button type="button" class="btn btn-sm btn-success edit-user-btnn" data-toggle="modal"
-                                        data-target="#myModal"
+                                <button type="button" class="btn btn-sm btn-success edit-user-btnn"
                                         data-mybtnname="Edit" data-btnrow="${x?counter}">Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger my-delete-button"
@@ -139,51 +138,58 @@
             <div class="modal-header bg-primary">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title text-capitalize" id="myModalLabel-user-get">Modal title</h4>
+                <h4 class="modal-title text-capitalize" id="myModalLabel-user-get">User data</h4>
             </div>
             <form id="mysupform-user-get">
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="form-group row">
-                            <label for="userid-text-input" class="col-2 col-form-label">User ID</label>
+                            <label for="userid-text-input-user-get" class="col-2 col-form-label">User ID</label>
                             <div class="col-10">
                                 <input class="form-control" type="text" name="id" placeholder="User ID"
-                                       id="userid-text-input-user-get">
+                                       id="userid-text-input-user-get" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="firstname-text-input" class="col-2 col-form-label">First Name</label>
+                            <label for="firstname-text-input-user-get" class="col-2 col-form-label">First Name</label>
                             <div class="col-10">
                                 <input class="form-control" type="text" name="first_name" placeholder="First Name"
-                                       id="firstname-text-input-user-get">
+                                       id="firstname-text-input-user-get" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="lastname-text-input" class="col-2 col-form-label">Last Name</label>
+                            <label for="lastname-text-input-user-get" class="col-2 col-form-label">Last Name</label>
                             <div class="col-10">
                                 <input class="form-control" type="text" name="last_name" placeholder="Last Name"
-                                       id="lastname-text-input-user-get">
+                                       id="lastname-text-input-user-get" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="salary-number-input" class="col-2 col-form-label">Salary</label>
+                            <label for="salary-number-input-user-get" class="col-2 col-form-label">Salary</label>
                             <div class="col-10">
                                 <input class="form-control" type="number" name="salary" placeholder="Salary"
-                                       id="salary-number-input-user-get">
+                                       id="salary-number-input-user-get" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="dob-date-input" class="col-2 col-form-label">Date of Birth</label>
+                            <label for="dob-date-input-user-get" class="col-2 col-form-label">Date of Birth</label>
                             <div class="col-10">
                                 <input class="form-control" type="date" name="dob" placeholder="yyyy-mm-dd"
-                                       id="dob-date-input-user-get">
+                                       id="dob-date-input-user-get" readonly>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="image-user-get" class="col-2 col-form-label">User Image</label>
+                            <div class="col-10">
+                                <img src="" alt="user image" id="image-user-get" class="img-thumbnail" readonly="">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" data-> Save changes</button>
+                    <!--<button type="submit" class="btn btn-primary" data-> Save changes</button>-->
                 </div>
             </form>
         </div>
@@ -224,58 +230,20 @@
     });
 </script>
 <script>
-    //    <!-- $(".myLink").click(function(e) {
-    //        $.ajax({
-    //            url: '@Url.RouteUrl(new{ action="Edit", controller="Home"})',
-    //            data: {id: 2},
-    //            type: 'GET',
-    //            dataType: 'json',
-    //            contentType: "application/json; charset=utf-8",
-    //            success: function(data) {
-    //                $(".message-edit-text").val(data.message);
-    //            }});
-    //        $('#myModal').modal('show');
-    //        e.preventDefault();
-    //    });-->
-    //    $('#users_tab').find('tr').click(
-    $('#users_tab').on('click', 'tr', function (e) {
-        // if ($(e.relatedTarget).data('btnrow')) return;
-        // row was clicked
+    //    $('table').on('click','.delete',function(){
+    //        $(this).parents('tr').remove();
+    //    })
+    $('#users_tab').on('click', '.edit-user-btnn', function (e) {
+        e.stopPropagation();
+        $('#myModal').modal(e);
 
-        var href = $(this).attr("id");
-        $.ajax({
-            url: 'user/' + href,
-            type: 'GET',
-//            data:href,
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-//                $(".message-edit-text").val(data.message);
-                $('#userid-text-input-user-get').prop("readonly", true);
-
-                $('#userid-text-input-user-get').val(data.Id)
-                $('#firstname-text-input-user-get').val(data.firstName)
-                $('#lastname-text-input-user-get').val(data.lastName)
-                $('#salary-number-input-user-get').val(data.salary)
-                $('#dob-date-input-user-get').val('' + data.dateOfBirth.year + '-' + ("0" + data.dateOfBirth.month).slice(-2) + '-' + ("0" + data.dateOfBirth.day).slice(-2))
-                console.log('clicked !!!' + data.Id);
-                $('#myModalShow-user-get').modal('show');
-//                alert('successfully submitted')
-            }
-        })
-
-
-//        if(href) {
-//            window.location = "user/"+href;
-//        }
-//        console.log('clicked !!!'+href);
     });
 </script>
 <script>
     $('#myModal').on('show.bs.modal', function (event) {
-
         var $table = $('#users_tab')
-        var button = $(event.relatedTarget) // Button that triggered the modal
+//        var button = $(event.relatedTarget) // Button that triggered the modal
+        var button = $(event.currentTarget) // Button that triggered the modal
         var firstName, lastName, salary, dateOfBirth, userId;
         var operation = button.data('mybtnname');
         var modal = $(this);
@@ -313,16 +281,71 @@
 
 
         }
+        event.stopPropagation();
+
     })
 </script>
 <script>
     $('#myModal').on('hidden.bs.modal', function (e) {
-        e.stopPropagation();
+
         $(this).find('#userid-text-input').val(''); // Just clear the contents.
         $(this).find('#firstname-text-input').val(''); // Just clear the contents.
         $(this).find('#lastname-text-input').val(''); // Just clear the contents.
         $(this).find('#salary-number-input').val(''); // Just clear the contents.
         $(this).find('#dob-date-input').val(''); // Just clear the contents.
+    });
+</script>
+<script>
+    //    <!-- $(".myLink").click(function(e) {
+    //        $.ajax({
+    //            url: '@Url.RouteUrl(new{ action="Edit", controller="Home"})',
+    //            data: {id: 2},
+    //            type: 'GET',
+    //            dataType: 'json',
+    //            contentType: "application/json; charset=utf-8",
+    //            success: function(data) {
+    //                $(".message-edit-text").val(data.message);
+    //            }});
+    //        $('#myModal').modal('show');
+    //        e.preventDefault();
+    //    });-->
+    //    $('#users_tab').find('tr').click(
+    $('#users_tab').on('click', 'tr', function (e) {
+        // row was clicked
+
+        var href = $(this).attr("id");
+        $.ajax({
+            url: 'user/' + href,
+            type: 'GET',
+//            data:href,
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+//                $(".message-edit-text").val(data.message);
+                $('#userid-text-input-user-get').prop("readonly", true);
+
+                $('#userid-text-input-user-get').val(data.Id)
+                $('#firstname-text-input-user-get').val(data.firstName)
+                $('#lastname-text-input-user-get').val(data.lastName)
+                $('#salary-number-input-user-get').val(data.salary)
+                $('#dob-date-input-user-get').val('' + data.dateOfBirth.year + '-' + ("0" + data.dateOfBirth.month).slice(-2) + '-' + ("0" + data.dateOfBirth.day).slice(-2))
+                var image = document.createElement('img');
+//                image.src = "data:image/png;base64," + data.picture;
+//                $('#image-user-get').src(image);
+                $('#image-user-get').attr('src', 'data:image/png;base64,'+data.picture);
+                console.log('clicked !!!' + data.Id);
+                $('#myModalShow-user-get').modal('show');
+//                alert('successfully submitted')
+            }
+        })
+
+
+//        if(href) {
+//            window.location = "user/"+href;
+//        }
+//        console.log('clicked !!!'+href);
+        e.stopPropagation();
+
     });
 </script>
 </body>

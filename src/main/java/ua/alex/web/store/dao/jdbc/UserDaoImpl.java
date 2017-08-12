@@ -24,8 +24,8 @@ public class UserDaoImpl implements UserDao<User, Long> {
     public UserDaoImpl() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-//            connection = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.1.70:1521/orcl", "web_store", "web_store");
-            connection = DriverManager.getConnection("jdbc:oracle:thin:@//172.30.151.122:1521/orcl", "web_store", "web_store");
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.1.70:1521/orcl", "web_store", "web_store");
+//            connection = DriverManager.getConnection("jdbc:oracle:thin:@//172.30.151.122:1521/orcl", "web_store", "web_store");
 
             System.err.println("Is generated keys supported:" + connection.getMetaData().supportsGetGeneratedKeys());
         } catch (SQLException e) {
